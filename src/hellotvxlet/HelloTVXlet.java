@@ -2,6 +2,7 @@ package hellotvxlet;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import javax.tv.xlet.*;
 import org.davic.resources.ResourceClient;
@@ -18,12 +19,16 @@ import org.havi.ui.event.HActionListener;
 import org.havi.ui.event.HBackgroundImageEvent;
 import org.havi.ui.event.HBackgroundImageListener;
 //Vergeet niet 'set as main project' te doen, door rechtermousklik op project
+import org.havi.ui.event.HFocusListener;
 
 //implement HActionListeren is nodig, twee keer moet je import zetten als die een error geeft
-public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBackgroundImageListener {
+public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBackgroundImageListener, HFocusListener {
     
     //Waarde scene globaal gemaakt zodat de actions eraan kunnen
     HScene scene=HSceneFactory.getInstance().getDefaultHScene();
+    
+    //Arrays
+      ArrayList titles=new ArrayList();ArrayList vrt=new ArrayList();ArrayList vtm=new ArrayList();ArrayList een=new ArrayList();ArrayList row=new ArrayList();
     
     public HelloTVXlet() {
        
@@ -51,9 +56,6 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       tijdbar.setBackgroundMode(HVisible.BACKGROUND_FILL);
       tijdbar.setBackground(Color.BLACK);
       scene.add(tijdbar);
-      
-      //Arrays
-      ArrayList titles=new ArrayList();ArrayList vrt=new ArrayList();ArrayList vtm=new ArrayList();ArrayList een=new ArrayList();ArrayList row=new ArrayList();
       
       //Vullen van de arrays met programma's/titles
       titles.add("EEN");titles.add("CANVAS");titles.add("VTM");     
@@ -131,18 +133,28 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
         
         //Print de waarde van de knop af in de output
         System.out.println(arg0.getActionCommand());
+        System.out.println(row.get(1));
+        for(int i = 0; i < row.size(); i++)
+        {
+            if (arg0.getActionCommand().equals(row.get(i)))
+            {
+                 System.out.println(row.get(i));
+            }
+        }
                 
         if (arg0.getActionCommand().equals("Het Journaal"))
         {
             HStaticText tekst2=new HStaticText("Het Journaal",10,70,700,200); //x,y,w,h
-            tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);
-            tekst2.setBackground(Color.ORANGE);
-            scene.add(tekst2);
+            HStaticText highlight=new HStaticText("",0,430,800,50);
+            highlight.setBackgroundMode(HVisible.BACKGROUND_FILL);highlight.setBackground(Color.ORANGE);
+            tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);tekst2.setBackground(Color.ORANGE);
+            row.get(1);
+            scene.add(tekst2);scene.add(highlight);
             scene.popToFront(tekst2);
             scene.repaint();
         }
         else {}
-            
+        
     }
 
     public boolean requestRelease(ResourceProxy proxy, Object requestData) {
@@ -162,6 +174,14 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     }
 
     public void imageLoadFailed(HBackgroundImageEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void focusGained(FocusEvent arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void focusLost(FocusEvent arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
