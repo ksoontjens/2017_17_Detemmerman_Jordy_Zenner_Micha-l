@@ -7,18 +7,19 @@ import java.util.ArrayList;
 import javax.tv.xlet.*;
 import org.davic.resources.ResourceClient;
 import org.davic.resources.ResourceProxy;
+import org.havi.ui.HBackgroundConfigTemplate;
+import org.havi.ui.HBackgroundDevice;
+import org.havi.ui.HBackgroundImage;
 import org.havi.ui.HScene;
 import org.havi.ui.HSceneFactory;
+import org.havi.ui.HScreen;
 import org.havi.ui.HStaticText;
+import org.havi.ui.HStillImageBackgroundConfiguration;
 import org.havi.ui.HTextButton;
 import org.havi.ui.HVisible;
-
-//Paar opmerkingen:
 import org.havi.ui.event.HActionListener;
-//Nieuwe projecten kopieren van voorbeeld, zelf nieuwe aanmaken gaat niet werken
 import org.havi.ui.event.HBackgroundImageEvent;
 import org.havi.ui.event.HBackgroundImageListener;
-//Vergeet niet 'set as main project' te doen, door rechtermousklik op project
 import org.havi.ui.event.HFocusListener;
 
 //implement HActionListeren is nodig, twee keer moet je import zetten als die een error geeft
@@ -28,14 +29,31 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     HScene scene=HSceneFactory.getInstance().getDefaultHScene();
     
     //Arrays
-      ArrayList titles=new ArrayList();ArrayList vrt=new ArrayList();ArrayList vtm=new ArrayList();ArrayList een=new ArrayList();ArrayList row=new ArrayList();
+    ArrayList titles=new ArrayList();ArrayList vrt=new ArrayList();ArrayList vtm=new ArrayList();ArrayList een=new ArrayList();ArrayList row=new ArrayList();
+    
+    private HScreen screen;    
+    private HBackgroundDevice bgDev;    
+    private HStillImageBackgroundConfiguration bgConfig;    
+    private HBackgroundImage bgImg1; 
     
     public HelloTVXlet() {
-       
     }
 
     public void initXlet(XletContext context) {
         
+        screen=HScreen.getDefaultHScreen();        
+        bgDev=screen.getDefaultHBackgroundDevice();        
+        bgDev.reserveDevice(this);        
+        HBackgroundConfigTemplate bgConfigTemplate =new HBackgroundConfigTemplate();        
+        bgConfigTemplate.setPreference(HBackgroundConfigTemplate.STILL_IMAGE,HBackgroundConfigTemplate.REQUIRED);        
+        try {            
+            bgConfig=(HStillImageBackgroundConfiguration)bgDev.getBestConfiguration(bgConfigTemplate);
+            bgDev.setBackgroundConfiguration(bgConfig);        
+        } catch 
+                (Exception ex) {            
+            ex.printStackTrace();        
+        }     
+      
       Time klok= new Time();
       scene.add(klok);
       
@@ -52,7 +70,7 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       scene.add(infoblock);
       
       //Tijdbar
-      HStaticText tijdbar=new HStaticText("",120,380,600,50);
+      HStaticText tijdbar=new HStaticText("17:00                  17:30                   18:00                  18:30",120,380,600,50);
       tijdbar.setBackgroundMode(HVisible.BACKGROUND_FILL);
       tijdbar.setBackground(Color.BLACK);
       scene.add(tijdbar);
@@ -113,11 +131,11 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       ((HTextButton)row.get(0)).requestFocus();
       scene.validate();
       scene.setVisible(true);
-     
     }
 
     public void startXlet() {
-    
+        bgImg1=new HBackgroundImage("gradient.jpg");        
+        bgImg1.load(this);
     }
 
     public void pauseXlet() {
@@ -169,12 +187,8 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void imageLoaded(HBackgroundImageEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public void imageLoadFailed(HBackgroundImageEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        System.out.println("Image mislukt");  
     }
 
     public void focusGained(FocusEvent arg0) {
@@ -184,4 +198,13 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     public void focusLost(FocusEvent arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+        public void imageLoaded(HBackgroundImageEvent e) {        
+        System.out.println("Image geladen");       
+        try {            
+            bgConfig.displayImage(bgImg1);       
+        } catch (Exception ex) {            
+            ex.printStackTrace();        
+        }    
+    }    
 }
