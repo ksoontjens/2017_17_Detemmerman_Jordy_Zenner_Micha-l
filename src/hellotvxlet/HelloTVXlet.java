@@ -27,33 +27,39 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     
     //Waarde scene globaal gemaakt zodat de actions eraan kunnen
     HScene scene=HSceneFactory.getInstance().getDefaultHScene();
+    HScreen screen;    
+    HBackgroundDevice bgDev;    
+    HStillImageBackgroundConfiguration bgConfig;    
+    HBackgroundImage bgImg; 
     
     //Arrays
     ArrayList titles=new ArrayList();ArrayList vrt=new ArrayList();ArrayList vtm=new ArrayList();ArrayList een=new ArrayList();ArrayList row=new ArrayList();
-    
-    private HScreen screen;    
-    private HBackgroundDevice bgDev;    
-    private HStillImageBackgroundConfiguration bgConfig;    
-    private HBackgroundImage bgImg1; 
     
     public HelloTVXlet() {
     }
 
     public void initXlet(XletContext context) {
         
+        
+        //Background
         screen=HScreen.getDefaultHScreen();        
         bgDev=screen.getDefaultHBackgroundDevice();        
         bgDev.reserveDevice(this);        
         HBackgroundConfigTemplate bgConfigTemplate =new HBackgroundConfigTemplate();        
         bgConfigTemplate.setPreference(HBackgroundConfigTemplate.STILL_IMAGE,HBackgroundConfigTemplate.REQUIRED);        
-        try {            
+        
+        try
+        {            
             bgConfig=(HStillImageBackgroundConfiguration)bgDev.getBestConfiguration(bgConfigTemplate);
             bgDev.setBackgroundConfiguration(bgConfig);        
-        } catch 
-                (Exception ex) {            
+        } 
+        catch(Exception ex)
+        {            
             ex.printStackTrace();        
         }     
       
+      
+      //Klok
       Time klok= new Time();
       scene.add(klok);
       
@@ -134,8 +140,8 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     }
 
     public void startXlet() {
-        bgImg1=new HBackgroundImage("gradient.jpg");        
-        bgImg1.load(this);
+        bgImg=new HBackgroundImage("gradient.jpg");        
+        bgImg.load(this);
     }
 
     public void pauseXlet() {
@@ -188,7 +194,7 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     }
 
     public void imageLoadFailed(HBackgroundImageEvent e) {
-        System.out.println("Image mislukt");  
+        System.out.println("Image Failed");  
     }
 
     public void focusGained(FocusEvent arg0) {
@@ -199,11 +205,15 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-        public void imageLoaded(HBackgroundImageEvent e) {        
-        System.out.println("Image geladen");       
-        try {            
-            bgConfig.displayImage(bgImg1);       
-        } catch (Exception ex) {            
+    public void imageLoaded(HBackgroundImageEvent e) {        
+        System.out.println("Image Loaded");       
+        
+        try
+        {            
+            bgConfig.displayImage(bgImg);       
+        } 
+        catch (Exception ex)
+        {            
             ex.printStackTrace();        
         }    
     }    
