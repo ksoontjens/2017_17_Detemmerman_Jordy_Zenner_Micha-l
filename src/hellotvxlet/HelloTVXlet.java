@@ -3,8 +3,6 @@ package hellotvxlet;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.tv.xlet.*;
 import org.davic.resources.ResourceClient;
 import org.davic.resources.ResourceProxy;
