@@ -27,19 +27,20 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     
     //Waarde scene globaal gemaakt zodat de actions eraan kunnen
     HScene scene=HSceneFactory.getInstance().getDefaultHScene();
-    HScreen screen;    
+    HScreen screen;
+    HStaticText infoblock2;
     HBackgroundDevice bgDev;    
     HStillImageBackgroundConfiguration bgConfig;    
     HBackgroundImage bgImg; 
     
     //Arrays
     ArrayList titles=new ArrayList();ArrayList vrt=new ArrayList();ArrayList vtm=new ArrayList();ArrayList een=new ArrayList();ArrayList row=new ArrayList();
+    ArrayList infovrt=new ArrayList();ArrayList infovtm=new ArrayList();ArrayList infoeen=new ArrayList();
     
     public HelloTVXlet() {
     }
 
     public void initXlet(XletContext context) {
-        
         
         //Background
         screen=HScreen.getDefaultHScreen();        
@@ -57,8 +58,7 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
         {            
             ex.printStackTrace();        
         }     
-      
-      
+           
       //Klok
       Time klok= new Time();
       scene.add(klok);
@@ -82,10 +82,31 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       scene.add(tijdbar);
       
       //Vullen van de arrays met programma's/titles
-      titles.add("EEN");titles.add("CANVAS");titles.add("VTM");     
+      titles.add("EEN");titles.add("CANVAS");titles.add("VTM");   
+      een.add("Thuis");een.add("De zevende dag");een.add("Het Journaal");een.add("Het Weer");
       vrt.add("Terzake");vrt.add("De afspraak");vrt.add("Het weer");vrt.add("Extra Time");
       vtm.add("Familie");vtm.add("De buurtpolitie");vtm.add("VTM Nieuws");vtm.add("Het Weer");
-      een.add("Thuis");een.add("De zevende dag");een.add("Het Journaal");een.add("Het Weer");
+      
+      infoeen.add("Dit is informatie over Thuis");
+      infoeen.add("Dit is informatie over De zevende dag");
+      infoeen.add("Dit is informatie over Het Journaal");
+      infoeen.add("Dit is informatie over Het Weer");
+      
+      infovrt.add("Dit is informatie over Terzake");
+      infovrt.add("Dit is informatie over De afspraak");
+      infovrt.add("Dit is informatie over Het weer");
+      infovrt.add("Dit is informatie over Extra Time");  
+      
+      infovtm.add("Dit is informatie over Familie");
+      infovtm.add("Dit is informatie over De buurtpolitie");
+      infovtm.add("Dit is informatie over VTM Nieuws");
+      infovtm.add("Dit is informatie over Het Weer");
+      
+      
+      infoblock2=new HStaticText("",10,100,695,250); //x,y,w,h
+      infoblock2.setBackgroundMode(HVisible.BACKGROUND_FILL);
+      infoblock2.setBackground(Color.GRAY);
+      scene.add(infoblock2);
       
       //Print titles
       for(int i=0; i < titles.size(); i++)
@@ -99,6 +120,7 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       //Print de één array
       for(int i = 0; i < een.size(); i++) {
           HTextButton list1=new HTextButton((String)een.get(i),120+(150*i),430,150,50);//x,y,w,h
+          list1.addHFocusListener(this);
           list1.setActionCommand((String)een.get(i));
           list1.addHActionListener(this);
           scene.add(list1);
@@ -108,6 +130,7 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       //Print de vrt array
       for(int i = 0; i < vrt.size(); i++) {
           HTextButton list2=new HTextButton((String)vrt.get(i),120+(150*i),480,150,50);//x,y,w,h
+          list2.addHFocusListener(this);
           list2.setActionCommand((String)vrt.get(i));
           list2.addHActionListener(this);
           scene.add(list2);
@@ -117,6 +140,7 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
       //Print de vtm array
       for(int i = 0; i < vtm.size(); i++) {
           HTextButton list3=new HTextButton((String)vtm.get(i),120+(150*i),530,150,50);//x,y,w,h
+          list3.addHFocusListener(this);
           list3.setActionCommand((String)vtm.get(i));
           list3.addHActionListener(this);
           scene.add(list3);
@@ -152,33 +176,8 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
      
     }
     
-    //Nodig voor actions
     public void actionPerformed(ActionEvent arg0) {
-        
-        //Print de waarde van de knop af in de output
-        System.out.println(arg0.getActionCommand());
-        System.out.println(row.get(1));
-        for(int i = 0; i < row.size(); i++)
-        {
-            if (arg0.getActionCommand().equals(row.get(i)))
-            {
-                 System.out.println(row.get(i));
-            }
-        }
-                
-        if (arg0.getActionCommand().equals("Het Journaal"))
-        {
-            HStaticText tekst2=new HStaticText("Het Journaal",10,70,700,200); //x,y,w,h
-            HStaticText highlight=new HStaticText("",0,430,800,50);
-            highlight.setBackgroundMode(HVisible.BACKGROUND_FILL);highlight.setBackground(Color.ORANGE);
-            tekst2.setBackgroundMode(HVisible.BACKGROUND_FILL);tekst2.setBackground(Color.ORANGE);
-            row.get(1);
-            scene.add(tekst2);scene.add(highlight);
-            scene.popToFront(tekst2);
-            scene.repaint();
-        }
-        else {}
-        
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public boolean requestRelease(ResourceProxy proxy, Object requestData) {
@@ -198,11 +197,49 @@ public class HelloTVXlet implements Xlet, HActionListener, ResourceClient, HBack
     }
 
     public void focusGained(FocusEvent arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
+        String tekst=(((HTextButton)arg0.getComponent()).getTextContent(HVisible.NORMAL_STATE));
+        System.out.println("Focus gained:"+tekst);
+        int index=0;
+        
+        for (int i=0;i<een.size();i++)
+        {
+            if (((String)een.get(i)).equals(tekst))
+            {
+                index=i;
+                infoblock2.setTextContent((String)infoeen.get(index), HVisible.NORMAL_STATE);
+                ((HTextButton)arg0.getComponent()).setBackground(Color.ORANGE);
+                System.out.println("Stel nieuw tekst in:"+(String)infoeen.get(index));
+            }
+        }
+        
+        for (int i=0;i<vrt.size();i++)
+        {
+            if (((String)vrt.get(i)).equals(tekst))
+            {
+                index=i;
+                infoblock2.setTextContent((String)infovrt.get(index), HVisible.NORMAL_STATE);
+                ((HTextButton)arg0.getComponent()).setBackground(Color.ORANGE);
+                System.out.println("Stel nieuw tekst in:"+(String)infovrt.get(index));
+            }
+        }
+        
+        for (int i=0;i<vtm.size();i++)
+        {
+            if (((String)vtm.get(i)).equals(tekst))
+            {
+                index=i;
+                infoblock2.setTextContent((String)infovtm.get(index), HVisible.NORMAL_STATE);
+                ((HTextButton)arg0.getComponent()).setBackground(Color.ORANGE);
+                System.out.println("Stel nieuw tekst in:"+(String)infovtm.get(index));
+            }
+        }
+        
+        scene.repaint();
     }
 
     public void focusLost(FocusEvent arg0) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ((HTextButton)arg0.getComponent()).setBackground(Color.BLACK);
     }
     
     public void imageLoaded(HBackgroundImageEvent e) {        
